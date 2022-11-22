@@ -72,7 +72,46 @@ void setup() {
 
 
 
+void merged(){
+  limit = 5;
 
+  val = 0.01273 * readUltrasonicDistance(OUTq1trig, OUTq1echo);
+  if (val <= limit) {
+
+    state3 = HIGH;
+    const char text[] = " queue 1_HIGH";
+          // Serial.println(text);
+          radio.write(&text, sizeof(text));
+          Serial.println("queue1 transmitted high");
+
+  } 
+  else{
+      const char text[] = " queue 1_LOW";
+      radio.write(&text, sizeof(text));
+       Serial.println("queue1 transmitted low");
+
+    }
+
+
+  val = 0.01273 * readUltrasonicDistance(OUTq2trig, OUTq2echo);
+  if (val <= limit) {
+    state4 = HIGH;
+    const char text[] = " queue 2_HIGH";
+          // Serial.println(text);
+          radio.write(&text, sizeof(text));
+          
+  Serial.println("queue2 transmitted high");
+
+  } 
+    else{
+
+        const char text[] = " queue 2_LOW";
+        radio.write(&text, sizeof(text));
+        Serial.println("queue2 transmitted low");
+
+    
+    }
+}
 
 void exitq1() {
   Serial.println("zYo");
@@ -102,7 +141,7 @@ void exitq1() {
 void exitq2() {
   limit = 5;
 
-  val = (0.034 / 2) * readUltrasonicDistance(OUTq2trig, OUTq2echo);
+  val = (0.01273) * readUltrasonicDistance(OUTq2trig, OUTq2echo);
   if (val <= limit) {
     state4 = HIGH;
     const char text[] = " queue 2_HIGH";
@@ -114,7 +153,7 @@ void exitq2() {
   } 
     else{
 
-        const char text[] = " queue 2_LOW";
+        const char text[] = "queue 2_LOW";
         radio.write(&text, sizeof(text));
         Serial.println("queue2 transmitted low");
 
@@ -127,8 +166,9 @@ void exitq2() {
 void repeat() {
 
   delay(10);
-  exitq1();
-  exitq2();
+  // exitq1();
+  // exitq2();
+  merged();  
   delay(10);
 }
 
@@ -139,24 +179,24 @@ void loop() {
   //delay(50);
 
   repeat();
-  if (counter > counter2 and flag) {
-    Serial.print("Enter queue 2 : ");
-    Serial.print(counter);
-    Serial.print(" ");
-    Serial.println(counter2);
-    flag = 0;
-  } else if (counter < counter2 and flag) {
-    Serial.print("Enter queue 1 : ");
-    Serial.print(counter);
-    Serial.print(" ");
-    Serial.println(counter2);
-    flag = 0;
-  } else if (counter == counter2 and flag) {
-    Serial.print("Enter any queue : ");
-    Serial.print(counter);
-    Serial.print(" ");
-    Serial.println(counter2);
-    flag = 0;
-  }
-  //delay(100);
+  // if (counter > counter2 and flag) {
+  //   Serial.print("Enter queue 2 : ");
+  //   Serial.print(counter);
+  //   Serial.print(" ");
+  //   Serial.println(counter2);
+  //   flag = 0;
+  // } else if (counter < counter2 and flag) {
+  //   Serial.print("Enter queue 1 : ");
+  //   Serial.print(counter);
+  //   Serial.print(" ");
+  //   Serial.println(counter2);
+  //   flag = 0;
+  // } else if (counter == counter2 and flag) {
+  //   Serial.print("Enter any queue : ");
+  //   Serial.print(counter);
+  //   Serial.print(" ");
+  //   Serial.println(counter2);
+  //   flag = 0;
+  // }
+  delay(100);
 }
