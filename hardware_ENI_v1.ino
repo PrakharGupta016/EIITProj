@@ -6,10 +6,13 @@
 //
 LiquidCrystal lcd(7, 6, 12, 11,10,9);
 
-int INq1 = 2;
-int INq2 = 3;
-int OUTq1 = 4;
-int OUTq2 = 5;
+int alert = 6;
+int INq1trig = 2;
+int INq1echo = 3;
+int INq2trig = 4;
+int INq2echo = 5;
+//int OUTq1 = 4;
+//int OUTq2 = 5;
 int limit = 0;
 int ledPin = 13;
 int state = LOW;
@@ -21,6 +24,8 @@ int counter = 0;
 int counter2 = 0;
 int val = 0;
 int flag =0;
+
+int max_limit =10;
 //int flag2 =0;
 
 #include <SPI.h>
@@ -58,6 +63,7 @@ void setup()
   lcd.print("queue-1 ");
   lcd.setCursor(0,1);
   lcd.print("queue-2 ");
+  digitalWrite(alert, LOW);
   
   pinMode(6, OUTPUT);
 
@@ -71,36 +77,48 @@ void setup()
 
 void entryq1()
 {
-  limit = 100;
+  limit = 5;
   
-  val = 0.01273 * readUltrasonicDistance(INq1,INq1);
-  if(val <= limit){
+  val = 0.01273 * readUltrasonicDistance(INq1trig,INq1echo);
+  if(val < limit and val>1){
   	digitalWrite(ledPin, HIGH);
     state = HIGH;
   }
   else{
-  	digitalWrite(ledPin, LOW);
-    if(state == HIGH)
-    {
-      Serial.println("Person entered queue");
-      counter++;
-      lcd.setCursor(8,0);
-      lcd.print(counter);
-      flag=1;
-      Serial.print("The number of people in the queue1 are: ");
-      Serial.println(counter);
-      state=LOW;
-      
-    }
+  	  digitalWrite(ledPin, LOW);
+      if(state == HIGH)
+      {
+        if(counter<max_limit)
+        { 
+          Serial.println("Person entered queue");
+          counter++;
+          lcd.setCursor(8,0);
+          lcd.print(counter);
+          flag=1;
+          Serial.print("The number of people in the queue1 are: ");
+          Serial.println(counter);
+          state=LOW;
+        }
+        else
+        {
+        Serial.println("Limit crossed.");
+        Serial.print("The number of people in the queue1 are: ");
+        Serial.println(counter);
+        // digitalWrite(alert, HIGH);
+        state=LOW;
+        }
+      }
+      digitalWrite(alert, LOW);
   }
+  
 }
 
 void entryq2()
 {
-  limit = 100;
+  limit = 5;
   
-  val = 0.01273 * readUltrasonicDistance(INq2,INq2);
-  if(val <= limit){
+  val = 0.01273 * readUltrasonicDistance(INq2trig,INq2echo);
+  if(val < limit and val>1){
   	digitalWrite(ledPin, HIGH);
     state2 = HIGH;
   }
@@ -108,18 +126,31 @@ void entryq2()
   	digitalWrite(ledPin, LOW);
     if(state2 == HIGH)
     {
-      Serial.println("Person entered queue");
-      counter2++;
-      lcd.setCursor(8,1);
-      lcd.print(counter2);
-      flag=1;
-      Serial.print("The number of people in the queue2 are: ");
-      Serial.println(counter2);
-      state2=LOW;
-      
+      if(counter2<max_limit)
+      {
+        Serial.println("Person entered queue");
+        counter2++;
+        lcd.setCursor(8,1);
+        lcd.print(counter2);
+        flag=1;
+        Serial.print("The number of people in the queue2 are: ");
+        Serial.println(counter2);
+        state2=LOW;
+      }
+      else
+      {
+        Serial.println("Limit crossed.");
+        Serial.print("The number of people in the queue2 are: ");
+        Serial.println(counter2);
+        // digitalWrite(alert, HIGH);
+        state2=LOW;
+      }
+    }
+    digitalWrite(alert, LOW);
+    
     }
   }
-}
+
 
 void exitq1()
 {
@@ -128,12 +159,12 @@ void exitq1()
     char text[32]="";
     radio.read(&text, sizeof(text));
     radio.read(&button_state, sizeof(button_state));
-    limit = 100;
-    if(text == "q1_HIGH")
+    // limit = 100;
+    if(text == "q1_HIGH" and button_state == HIGH)
     {
       state3 = HIGH;
     }
-    else if(text == "q1_LOW")
+    else if(text == "q1_LOW" and button_state == HIGH)    
     {
       state3 = LOW;
     }
