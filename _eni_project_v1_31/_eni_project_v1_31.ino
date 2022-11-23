@@ -48,6 +48,15 @@ int readUltrasonicDistance(int triggerPin, int echoPin) {
 }
 
 
+void buzz()
+{
+  tone(buzzPin, 1000);
+  delay(400);
+  digitalWrite(buzzPin, LOW);
+  delay(400);
+}
+
+
 
 void setup() {
   pinMode(ledPin, OUTPUT);
