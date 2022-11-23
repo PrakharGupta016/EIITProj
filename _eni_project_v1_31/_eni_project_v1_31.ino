@@ -29,7 +29,7 @@ int state4 = LOW;
 //queue<int> qu;
 int counter = 0;
 int counter2 = 0;
-int val = 0;
+unsigned int val = 0;
 int flag = 0;
 //int flag2 =0;
 
@@ -48,13 +48,6 @@ int readUltrasonicDistance(int triggerPin, int echoPin) {
 }
 
 
-void buzz()
-{
-  tone(buzzPin, 1000);
-  delay(400);
-  digitalWrite(buzzPin, LOW);
-  delay(400);
-}
 
 
 
@@ -80,48 +73,6 @@ void setup() {
 }
 
 
-
-void merged(){
-  limit = 5;
-
-  val = 0.01273 * readUltrasonicDistance(OUTq1trig, OUTq1echo);
-  if (val <= limit) {
-
-    state3 = HIGH;
-    const char text[] = " queue 1_HIGH";
-          // Serial.println(text);
-          radio.write(&text, sizeof(text));
-          Serial.println("queue1 transmitted high");
-
-  } 
-  else{
-      const char text[] = " queue 1_LOW";
-      radio.write(&text, sizeof(text));
-       Serial.println("queue1 transmitted low");
-
-    }
-
-
-  val = 0.01273 * readUltrasonicDistance(OUTq2trig, OUTq2echo);
-  if (val <= limit) {
-    state4 = HIGH;
-    const char text[] = " queue 2_HIGH";
-          // Serial.println(text);
-          radio.write(&text, sizeof(text));
-          
-  Serial.println("queue2 transmitted high");
-
-  } 
-    else{
-
-        const char text[] = " queue 2_LOW";
-        radio.write(&text, sizeof(text));
-        Serial.println("queue2 transmitted low");
-
-    
-    }
-}
-
 void exitq1() {
   Serial.println("zYo");
  
@@ -130,18 +81,20 @@ void exitq1() {
   limit = 5;
 
   val = 0.01273 * readUltrasonicDistance(OUTq1trig, OUTq1echo);
-  if (val <= limit) {
+  if (val <= limit and val >0) {
 
     state3 = HIGH;
-    const char text[] = " queue 1_HIGH";
+    const char text[] = "q1_HIGH";
+    unsigned int pp=11;
           // Serial.println(text);
-          radio.write(&text, sizeof(text));
+          radio.write(&pp, sizeof(pp));
           Serial.println("queue1 transmitted high");
 
   } 
   else{
-      const char text[] = " queue 1_LOW";
-      radio.write(&text, sizeof(text));
+      const char text[] = "q1_LOW";
+      unsigned int pp=10;
+      radio.write(&pp, sizeof(pp));
        Serial.println("queue1 transmitted low");
 
     }
@@ -151,19 +104,21 @@ void exitq2() {
   limit = 5;
 
   val = (0.01273) * readUltrasonicDistance(OUTq2trig, OUTq2echo);
-  if (val <= limit) {
+  if (val <= limit and val >0) {
     state4 = HIGH;
-    const char text[] = " queue 2_HIGH";
+    const char text[] = "q2_HIGH";
+    unsigned int pp=21;
           // Serial.println(text);
-          radio.write(&text, sizeof(text));
+          radio.write(&pp, sizeof(pp));
           
   Serial.println("queue2 transmitted high");
 
   } 
     else{
 
-        const char text[] = "queue 2_LOW";
-        radio.write(&text, sizeof(text));
+        const char text[] = "q2_LOW";
+        unsigned int pp=20;
+        radio.write(&pp, sizeof(pp));
         Serial.println("queue2 transmitted low");
 
     
@@ -175,9 +130,9 @@ void exitq2() {
 void repeat() {
 
   delay(10);
-  // exitq1();
-  // exitq2();
-  merged();  
+   exitq1();
+   exitq2();
+//  merged();  
   delay(10);
 }
 

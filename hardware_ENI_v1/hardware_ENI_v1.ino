@@ -81,6 +81,15 @@ void setup()
   
   Serial.begin(9600);
 }
+void recieve()
+{
+  if(radio.available())
+  {
+    char text[32]="";
+    radio.read(&text, sizeof(text));
+    Serial.println(text);
+  }
+}
 
 void entryq1()
 {
@@ -138,16 +147,20 @@ void exitq1()
 {
   if(radio.available())
   {
-    char text[32]="";
-    radio.read(&text, sizeof(text));
-    radio.read(&button_state, sizeof(button_state));
-    // limit = 100;
-    if(text == "q1_HIGH" and button_state == HIGH)
+    const char text[] ="";
+    unsigned int pp;
+    radio.read(&pp, sizeof(pp));
+//    Serial.println(pp);
+    //radio.read(&button_state, sizeof(button_state));
+    // limit = 25;
+    if(pp == 11)
     {
+//      Serial.println("q1_ok_high");
       state3 = HIGH;
     }
-    else if(text == "q1_LOW" and button_state == HIGH)    
+    else if(pp == 10)    
     {
+//      Serial.println("q1_ok_low");
       state3 = LOW;
     }
 
@@ -178,16 +191,20 @@ void exitq2()
 {
   if(radio.available())
   {
-    char text[32]="";
-    radio.read(&text, sizeof(text));
-    radio.read(&button_state, sizeof(button_state));
-    limit = 100;
-    if(text == "q2_HIGH")
+    const char text[]  ="";
+    unsigned int pp;
+    radio.read(&pp, sizeof(pp));
+//    Serial.println(text);
+//    radio.read(&button_state, sizeof(button_state));
+    limit = 25;
+    if(pp == 21)
     {
+//      Serial.println("q2_ok_high");
       state4 = HIGH;
     }
-    else if(text == "q2_LOW")
+    else if(pp == 20)
     {
+//      Serial.println("q2_ok_low");
       state4 = LOW;
     }
 
@@ -219,17 +236,21 @@ void repeat()
 //  entry(state, counter, INq1trig, INq1echo);
 //  entry(state2, counter2, INq2trig, INq2echo);
   if(counter >=10)
-  {buzz(); 
-  Serial.print(" in queue 1");}
-  if(counter2>=10){ 
+  { 
+    buzz(); 
+    Serial.print(" in queue 1");
+  }
+  if(counter2>=10)
+  { 
     buzz();
     Serial.print(" in queue 2");
   }
-  entryq1();
-  entryq2();
+//  entryq1();
+//  entryq2();
  // delay(10);
-  //exitq1();
-  //exitq2();
+//  recieve();
+  exitq1();
+  exitq2();
   //delay(10);
 }
 
