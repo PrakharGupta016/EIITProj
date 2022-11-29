@@ -75,65 +75,75 @@ void setup() {
 
 void exitq1() {
   Serial.println("zYo");
- 
 
-  
-  limit = 5;
+
+
+  limit = 15;
 
   val = 0.01273 * readUltrasonicDistance(OUTq1trig, OUTq1echo);
-  if (val <= limit and val >0) {
+  if (val <= limit and val > 0) {
 
     state3 = HIGH;
     const char text[] = "q1_HIGH";
-    unsigned int pp=11;
-          // Serial.println(text);
-          radio.write(&pp, sizeof(pp));
-          Serial.println("queue1 transmitted high");
+    unsigned int pp = 11;
+    // Serial.println(text);
+    // radio.write(&pp, sizeof(pp));
+    Serial.println("queue1 transmitted high");
 
-  } 
-  else{
-      const char text[] = "q1_LOW";
-      unsigned int pp=10;
-      radio.write(&pp, sizeof(pp));
+  } else {
+    const char text[] = "q1_LOW";
+    unsigned int pp = 10;
+    // radio.write(&pp, sizeof(pp));
+   
+    if (state3 == HIGH) {
        Serial.println("queue1 transmitted low");
+      pp=11;
+      radio.write(&pp, sizeof(pp));
+      Serial.println("queue1 data sent ");
+      state3 = LOW;
+    }
+    else{
 
     }
+  }
 }
 
 void exitq2() {
-  limit = 5;
+  limit = 15;
 
   val = (0.01273) * readUltrasonicDistance(OUTq2trig, OUTq2echo);
-  if (val <= limit and val >0) {
+  if (val <= limit and val > 0) {
     state4 = HIGH;
     const char text[] = "q2_HIGH";
-    unsigned int pp=21;
-          // Serial.println(text);
-          radio.write(&pp, sizeof(pp));
-          
-  Serial.println("queue2 transmitted high");
+    unsigned int pp = 21;
+    // Serial.println(text);
+    // radio.write(&pp, sizeof(pp));
 
-  } 
-    else{
+    Serial.println("queue2 transmitted high");
 
-        const char text[] = "q2_LOW";
-        unsigned int pp=20;
-        radio.write(&pp, sizeof(pp));
-        Serial.println("queue2 transmitted low");
+  } else {
 
-    
+    const char text[] = "q2_LOW";
+    unsigned int pp = 20;
+    if (state4 == HIGH) {
+       Serial.println("queue2 transmitted low");
+      pp=21;
+      radio.write(&pp, sizeof(pp));
+      Serial.println("queue2 data sent ");
+      state4 = LOW;
     }
-  
+
+  }
 }
 
 
 void repeat() {
 
-  delay(10);
-   exitq1();
-   exitq2();
-//  merged();  
-  delay(10);
+
+  exitq1();
+  exitq2();
+  //  merged();
+  delay(100);
 }
 
 void loop() {
@@ -162,5 +172,4 @@ void loop() {
   //   Serial.println(counter2);
   //   flag = 0;
   // }
-  delay(100);
 }
