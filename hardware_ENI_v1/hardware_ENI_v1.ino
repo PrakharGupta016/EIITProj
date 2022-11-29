@@ -4,7 +4,7 @@
 
 // C++ code
 //
-LiquidCrystal lcd(7, 6, 12, 11,10,9);
+LiquidCrystal lcd(A0, A1, A2, A3,A4,A5);
 
 int buzzPin = 6;
 int INq1trig = 2;
@@ -40,6 +40,7 @@ boolean button_state = 0;
 int readUltrasonicDistance(int triggerPin, int echoPin)
 {
   pinMode(triggerPin, OUTPUT);  // Clear the trigger
+  
   digitalWrite(triggerPin, LOW);
   delayMicroseconds(2);
   // Sets the trigger pin to HIGH state for 10 microseconds
@@ -66,11 +67,15 @@ void setup()
 {
   //pinMode(inputIN, INPUT);
   //pinMode(inputOUT, INPUT);
+  // pinMode(A5, OUTPUT);
+  // pinMode(A4, OUTPUT);
+  // pinMode(A3, OUTPUT);
+  // pinMode(A2, OUTPUT);
+  // pinMode(A1, OUTPUT);
+  // pinMode(A0, OUTPUT);
+
   lcd.begin(16, 2); 
-  lcd.setCursor(0,0);
-  lcd.print("queue-1 ");
-  lcd.setCursor(0,1);
-  lcd.print("queue-2 ");
+  
     
   pinMode(6, OUTPUT);
 
@@ -121,7 +126,7 @@ void entryq2()
   limit = 20;
   
   val = 0.01273 * readUltrasonicDistance(INq2trig,INq2echo);
-  Serial.println(val);
+  // Serial.println(val);
   // delay(50);
   if(val < limit and val>1){
   	//digitalWrite(ledPin, HIGH);
@@ -237,6 +242,10 @@ entryq2();
 
 void loop()
 {
+  lcd.setCursor(0,0);
+  lcd.print("queue-1 ");
+  lcd.setCursor(0,1);
+  lcd.print("queue-2 ");
   //digitalWrite(ledPin, HIGH);
   //delay(50);
   //digitalWrite(ledPin, LOW);
