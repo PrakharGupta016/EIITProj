@@ -53,7 +53,7 @@ int readUltrasonicDistance(int triggerPin, int echoPin)
 
 void buzz()
 {
-  Serial.println("Limit crossed.");
+  //Serial.println("Limit crossed.");
   tone(buzzPin, 1000);
   delay(50);
   tone(buzzPin, 10);
@@ -93,7 +93,7 @@ void recieve()
 
 void entryq1()
 {
-  limit = 25;
+  limit = 20;
   
   val = 0.01273 * readUltrasonicDistance(INq1trig,INq1echo);
   if(val < limit and val>1)
@@ -118,11 +118,11 @@ void entryq1()
 
 void entryq2()
 {
-  limit = 25;
+  limit = 20;
   
   val = 0.01273 * readUltrasonicDistance(INq2trig,INq2echo);
   Serial.println(val);
-  delay(50);
+  // delay(50);
   if(val < limit and val>1){
   	//digitalWrite(ledPin, HIGH);
     state2 = HIGH;
@@ -156,17 +156,6 @@ void exitq1()
     if(pp == 11)
     {
 //      Serial.println("q1_ok_high");
-      state3 = HIGH;
-    }
-    else if(pp == 10)    
-    {
-//      Serial.println("q1_ok_low");
-      state3 = LOW;
-    }
-
-    if(state3 ==HIGH)
-    {
-      
       if(counter){
         counter--;
         flag=1;
@@ -175,15 +164,16 @@ void exitq1()
       }
       else{
         Serial.println("Queue empty");
-        state3 = LOW;
+        //state3 = LOW;
         return;
       }
       Serial.println("Person exited queue");
       Serial.print("The number of people in the queue1 are: ");
       Serial.println(counter);
-      state3=LOW;
-      
+      //state3=LOW;
+
     }
+    
   }
 }
 
@@ -200,17 +190,6 @@ void exitq2()
     if(pp == 21)
     {
 //      Serial.println("q2_ok_high");
-      state4 = HIGH;
-    }
-    else if(pp == 20)
-    {
-//      Serial.println("q2_ok_low");
-      state4 = LOW;
-    }
-
-    if(state4 ==HIGH)
-    {
-      
       if(counter2){
         counter2--;
         flag=1;
@@ -219,15 +198,17 @@ void exitq2()
       }
       else{
         Serial.println("Queue empty");
-        state4 = LOW;
+        //state4 = LOW;
         return;
       }
       Serial.println("Person exited queue");
       Serial.print("The number of people in the queue2s are: ");
       Serial.println(counter2);
-      state4=LOW;
+      //state4=LOW;
       
     }
+    
+
   }
 }
 
@@ -238,16 +219,16 @@ void repeat()
   if(counter >=10)
   { 
     buzz(); 
-    Serial.print(" in queue 1");
+    //Serial.print(" in queue 1");
   }
   if(counter2>=10)
   { 
     buzz();
-    Serial.print(" in queue 2");
+    //Serial.print(" in queue 2");
   }
-//  entryq1();
-//  entryq2();
- // delay(10);
+ entryq1();
+entryq2();
+//  delay(10);
 //  recieve();
   exitq1();
   exitq2();
