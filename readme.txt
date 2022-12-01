@@ -5,9 +5,9 @@ Work done:
 2)Recieving and transmitting individually
 
 Pending work:
-1)Exit counter transmission recieving in the main arduino
+DONE ~1)Exit counter transmission recieving in the main arduino~~
 2)LCD interfacing
-3)Buzzer activation
+DONE ~~3)Buzzer activation~~
 
 Extra work:
 1)App-arduino connection using BT
