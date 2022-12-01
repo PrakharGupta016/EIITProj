@@ -116,7 +116,8 @@ void entryq1()
     if(state == HIGH)
     {
       Serial.println("Person entered queue");
-      counter++;
+      if(counter<10)
+      {counter++;}
       flag=1;
       Serial.print("The number of people in the queue1 are: ");
       Serial.println(counter);
@@ -131,7 +132,7 @@ void entryq2()
   limit = 25;
   
   val = 0.01273 * readUltrasonicDistance(INq2trig,INq2echo);
-   Serial.println(val);
+//   Serial.println(val);
   // delay(50);
   if(val < limit and val>1){
     //digitalWrite(ledPin, HIGH);
@@ -143,13 +144,73 @@ void entryq2()
     if(state2 == HIGH)
     {
       Serial.println("Person entered queue");
-      counter2++;
+      if(counter2<10)counter2++;
       flag=1;
       Serial.print("The number of people in the queue2 are: ");
       Serial.println(counter2);
      
       state2=LOW;
     }   
+  }
+}
+
+void exitq()
+{
+  if(radio.available())
+  {
+    unsigned int pp;
+    radio.read(&pp, sizeof(pp));
+    if(pp==11)
+    {
+      if(counter){
+        counter--;
+        flag=1;
+      }
+      else{
+        Serial.println("Queue empty");
+        //state3 = LOW;
+        return;
+      }
+      Serial.println("Person exited queue");
+      Serial.print("The number of people in the queue1 are: ");
+      Serial.println(counter);
+    }
+    else if(pp==21)
+    {
+      //Serial.println("q2_ok_high");
+      if(counter2){
+        counter2--;
+        flag=1;
+        
+      }
+      else{
+        Serial.println("Queue empty");
+        //state4 = LOW;
+        return;
+      }
+      Serial.println("Person exited queue");
+      Serial.print("The number of people in the queue2s are: ");
+      Serial.println(counter2);
+    }
+    else if(pp == 31)
+    {
+      if(counter) counter--;
+      else
+      {
+        Serial.println("Queue empty");
+        return;
+      }
+      if(counter2)counter2--;
+      else
+      {
+        Serial.println("Queue empty");
+        return;
+      }
+      Serial.println("People exited the queue");
+      Serial.println(counter + " " + counter2);
+      
+    }
+    
   }
 }
 
@@ -187,15 +248,18 @@ void exitq1()
     
   }
 }
-
+int pp2=0;
 void exitq2()
 {
+  //Serial.println("bc");
+  Serial.println(radio.available());
   if(radio.available())
   {
+    Serial.println("bc");
     const char text[]  ="";
     unsigned int pp;
     radio.read(&pp, sizeof(pp));
-//    Serial.println(text);
+    Serial.println(pp);
 //    radio.read(&button_state, sizeof(button_state));
     limit = 25;
     if(pp == 21)
@@ -225,12 +289,13 @@ void exitq2()
 
 void show()
 {
-  lcd.setCursor(0,0);
+      lcd.clear();
+      lcd.setCursor(0,0);
       lcd.print("queue-1:");
       lcd.setCursor(9, 0);
       lcd.print(counter);
 
-       lcd.setCursor(0,1);
+      lcd.setCursor(0,1);
       lcd.print("queue-2:");
       lcd.setCursor(9, 1);
       lcd.print(counter2);
@@ -252,12 +317,16 @@ void repeat()
     buzz();
     //Serial.print(" in queue 2");
   }
+  else{
+    noTone(buzzPin);
+  }
  entryq1();
 entryq2();
 //  delay(10);
 //  recieve();
-  exitq1();
-  exitq2();
+    exitq();
+//  exitq1();
+//  exitq2();
   show();
   //delay(10);
 }
