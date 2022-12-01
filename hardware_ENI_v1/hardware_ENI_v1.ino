@@ -4,7 +4,7 @@
 
 // C++ code
 //
-LiquidCrystal lcd(7, 6, 12, 11,10,9);
+LiquidCrystal lcd(A0, A1, A2, A3,A4,A5);
 
 int buzzPin = 6;
 int INq1trig = 2;
@@ -22,7 +22,7 @@ int state4 = LOW;
 //queue<int> qu;
 int counter = 0;
 int counter2 = 0;
-unsigned int val = 0;
+ int val = 0;
 int flag =0;
 
 int max_limit =10;
@@ -40,6 +40,7 @@ boolean button_state = 0;
 int readUltrasonicDistance(int triggerPin, int echoPin)
 {
   pinMode(triggerPin, OUTPUT);  // Clear the trigger
+  
   digitalWrite(triggerPin, LOW);
   delayMicroseconds(2);
   // Sets the trigger pin to HIGH state for 10 microseconds
@@ -53,7 +54,7 @@ int readUltrasonicDistance(int triggerPin, int echoPin)
 
 void buzz()
 {
-  Serial.println("Limit crossed.");
+  //Serial.println("Limit crossed.");
   tone(buzzPin, 1000);
   delay(50);
   tone(buzzPin, 10);
@@ -66,11 +67,15 @@ void setup()
 {
   //pinMode(inputIN, INPUT);
   //pinMode(inputOUT, INPUT);
+  // pinMode(A5, OUTPUT);
+  // pinMode(A4, OUTPUT);
+  // pinMode(A3, OUTPUT);
+  // pinMode(A2, OUTPUT);
+  // pinMode(A1, OUTPUT);
+  // pinMode(A0, OUTPUT);
+
   lcd.begin(16, 2); 
-  lcd.setCursor(0,0);
-  lcd.print("queue-1 ");
-  lcd.setCursor(0,1);
-  lcd.print("queue-2 ");
+  
     
   pinMode(6, OUTPUT);
 
@@ -93,17 +98,21 @@ void recieve()
 
 void entryq1()
 {
-  limit = 25;
+  limit = 10;
   
   val = 0.01273 * readUltrasonicDistance(INq1trig,INq1echo);
+//  Serial.println(val);
+  
+  
   if(val < limit and val>1)
   {
-  	digitalWrite(ledPin, HIGH);
+    
+    digitalWrite(ledPin, HIGH);
     state = HIGH;
   }
-  else
+  else if(val > limit)
   {
-  	digitalWrite(ledPin, LOW);
+    digitalWrite(ledPin, LOW);
     if(state == HIGH)
     {
       Serial.println("Person entered queue");
@@ -111,6 +120,7 @@ void entryq1()
       flag=1;
       Serial.print("The number of people in the queue1 are: ");
       Serial.println(counter);
+      
       state=LOW;
     }
   }
@@ -121,15 +131,15 @@ void entryq2()
   limit = 25;
   
   val = 0.01273 * readUltrasonicDistance(INq2trig,INq2echo);
-  Serial.println(val);
-  delay(50);
+   Serial.println(val);
+  // delay(50);
   if(val < limit and val>1){
-  	//digitalWrite(ledPin, HIGH);
+    //digitalWrite(ledPin, HIGH);
     state2 = HIGH;
   }
-  else
+  else if(val >limit)
   {
-  	//digitalWrite(ledPin, LOW);
+    //digitalWrite(ledPin, LOW);
     if(state2 == HIGH)
     {
       Serial.println("Person entered queue");
@@ -137,6 +147,7 @@ void entryq2()
       flag=1;
       Serial.print("The number of people in the queue2 are: ");
       Serial.println(counter2);
+     
       state2=LOW;
     }   
   }
@@ -156,34 +167,24 @@ void exitq1()
     if(pp == 11)
     {
 //      Serial.println("q1_ok_high");
-      state3 = HIGH;
-    }
-    else if(pp == 10)    
-    {
-//      Serial.println("q1_ok_low");
-      state3 = LOW;
-    }
-
-    if(state3 ==HIGH)
-    {
-      
       if(counter){
         counter--;
         flag=1;
         //lcd.setCursor(8,0);
-     	  //lcd.print(counter);
+        //lcd.print(counter);
       }
       else{
         Serial.println("Queue empty");
-        state3 = LOW;
+        //state3 = LOW;
         return;
       }
       Serial.println("Person exited queue");
       Serial.print("The number of people in the queue1 are: ");
       Serial.println(counter);
-      state3=LOW;
-      
+      //state3=LOW;
+
     }
+    
   }
 }
 
@@ -200,35 +201,41 @@ void exitq2()
     if(pp == 21)
     {
 //      Serial.println("q2_ok_high");
-      state4 = HIGH;
-    }
-    else if(pp == 20)
-    {
-//      Serial.println("q2_ok_low");
-      state4 = LOW;
-    }
-
-    if(state4 ==HIGH)
-    {
-      
       if(counter2){
         counter2--;
         flag=1;
         //lcd.setCursor(8,0);
-     	  //lcd.print(counter);
+        //lcd.print(counter);
       }
       else{
         Serial.println("Queue empty");
-        state4 = LOW;
+        //state4 = LOW;
         return;
       }
       Serial.println("Person exited queue");
       Serial.print("The number of people in the queue2s are: ");
       Serial.println(counter2);
-      state4=LOW;
+      //state4=LOW;
       
     }
+    
+
   }
+}
+
+void show()
+{
+  lcd.setCursor(0,0);
+      lcd.print("queue-1:");
+      lcd.setCursor(9, 0);
+      lcd.print(counter);
+
+       lcd.setCursor(0,1);
+      lcd.print("queue-2:");
+      lcd.setCursor(9, 1);
+      lcd.print(counter2);
+
+      
 }
 
 void repeat()
@@ -238,24 +245,29 @@ void repeat()
   if(counter >=10)
   { 
     buzz(); 
-    Serial.print(" in queue 1");
+    //Serial.print(" in queue 1");
   }
   if(counter2>=10)
   { 
     buzz();
-    Serial.print(" in queue 2");
+    //Serial.print(" in queue 2");
   }
-//  entryq1();
-//  entryq2();
- // delay(10);
+ entryq1();
+entryq2();
+//  delay(10);
 //  recieve();
   exitq1();
   exitq2();
+  show();
   //delay(10);
 }
 
 void loop()
 {
+  lcd.setCursor(0,0);
+  lcd.print("queue-1 ");
+  lcd.setCursor(0,1);
+  lcd.print("queue-2 ");
   //digitalWrite(ledPin, HIGH);
   //delay(50);
   //digitalWrite(ledPin, LOW);
@@ -267,7 +279,7 @@ void loop()
     Serial.print(counter);
     Serial.print(" ");
     Serial.println(counter2);
-  	flag=0;
+    flag=0;
   }
   else if(counter < counter2 and flag)
   {
@@ -275,7 +287,7 @@ void loop()
     Serial.print(counter);
     Serial.print(" ");
     Serial.println(counter2);
-  	flag=0;
+    flag=0;
   }
   else if(counter == counter2 and flag)
   {
@@ -283,7 +295,7 @@ void loop()
     Serial.print(counter);
     Serial.print(" ");
     Serial.println(counter2);
-  	flag=0;
+    flag=0;
   }
   //delay(100);
       
